@@ -61,6 +61,7 @@ typedef enum {
     // choose one opencl memory mode Only
     /* User can try OpenCL_MEMORY_BUFFER and OpenCL_MEMORY_IMAGE both,
      then choose the better one according to performance*/
+    // MNN支持buffer和image两种GPU内存格式，但用户只能选一种。
     MNN_GPU_MEMORY_BUFFER = 1 << 6,/* User assign mode */
     MNN_GPU_MEMORY_IMAGE  = 1 << 7,/* User assign mode */
 } MNNGpuMode;

@@ -76,7 +76,7 @@ private:
     // remove all assignment operator
     Tensor(const Tensor& tensor)  = delete;
     Tensor(const Tensor&& tensor) = delete;
-    Tensor& operator=(const Tensor&) = delete;
+    Tensor& operator=(const Tensor&) = delete; // 这里可以继承NoCopyable
     Tensor& operator=(const Tensor&&) = delete;
 
 public:
@@ -88,7 +88,7 @@ public:
      * @return created tensor.
      * @warning memory for data won't be acquired. call backend's onAcquireBuffer to get memory ready.
      */
-    static Tensor* createDevice(const std::vector<int>& shape, halide_type_t type, DimensionType dimType = TENSORFLOW);
+      static Tensor* createDevice(const std::vector<int>& shape, halide_type_t type, DimensionType dimType = TENSORFLOW);
 
     /**
      * @brief create tensor with shape and dimension type. data type is represented by `T`.
@@ -207,7 +207,7 @@ public:
      * @brief visit device memory.
      * @return device data ID. what the ID means varies between backends.
      */
-    uint64_t deviceId() const {
+    uint64_t deviceId() const { // CPu是否可以作为一种后端，在推理框架中统一处理？
         return mBuffer.device;
     }
 
@@ -220,7 +220,7 @@ public:
      * @brief get all dimensions' extent.
      * @return dimensions' extent.
      */
-    std::vector<int> shape() const;
+    std::vector<int> shape() const; // shape定义成一个独立的Shape类型是否更好？
 
     /**
      * @brief calculate number of bytes needed to store data taking reordering flag into account.
@@ -298,7 +298,7 @@ public:
      */
     int wait(MapType mtype, bool finish);
 private:
-    halide_buffer_t mBuffer;
+    halide_buffer_t mBuffer; // tensor内容完全用halide_buffer_t来存储
     struct InsideDescribe* mDescribe;
 
 private:

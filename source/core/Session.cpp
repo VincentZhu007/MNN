@@ -26,7 +26,7 @@ Session::Session(Schedule::ScheduleInfo&& info, const ModeGroup& mode, RuntimeIn
         mValid = false;
         return;
     }
-    mTensors       = std::move(info.allTensors);
+    mTensors = std::move(info.allTensors);
     auto defaultBn = std::move(info.defaultBackend);
     for (auto& iter : info.pipelineInfo) {
         auto rt    = mRuntime.first.find(iter.first.type)->second.get();

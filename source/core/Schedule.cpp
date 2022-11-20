@@ -43,7 +43,8 @@ MNNForwardType Schedule::getApprociateType(const ScheduleConfig& config) {
 
         for (auto bn : priorityList) {
             if (MNNGetExtraRuntimeCreator(bn) != nullptr) {
-                type = (MNNForwardType)bn;
+//                type = (MNNForwardType)bn; // 这里没必要强转
+                type = bn;
                 break;
             }
         }

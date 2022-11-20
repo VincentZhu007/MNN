@@ -1,0 +1,73 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+' 声明参与者
+actor User
+box "MNN Core"
+participant Interpreter
+participant Schedule
+participant RuntimeFactory
+participant Session
+participant Pipeline
+end box
+box "OpenCL Backend"
+participant CLRuntimeCreator
+participant CLRuntime
+participant OpenCLBackend
+participant OpenCLOpXxxExecution
+end box
+
+== 1. 创建Interpreter对象 ==
+autonumber 1.1
+
+User -> Interpreter: createFromFile()
+Interpreter -> Interpreter: net=loadModelFile(file)
+Interpreter -> Interpreter: createFromBufferInternal(net, true)
+
+== 2. 创建Session对象 ==
+autonumber 2.1
+User -> Interpreter: createSession()
+group createMultiPathSession(configs)
+    group createRuntime(configs)
+        loop schedule configs
+            Interpreter -> Schedule: getApprociateType(config)
+            Interpreter -> RuntimeFactory: create(backendInfo)
+            RuntimeFactory -> CLRuntimeCreator: onCreate()
+            CLRuntimeCreator -> CLRuntime: new CLRuntime()
+        end
+    end
+    group createMultiPathSession()
+        Interpreter -> Schedule: schedule() 生成运行的pipeline
+        'Schedule::schedule()'
+        group 根据模型网络生成算子pipeline
+        Schedule -> Schedule: _setUpTensorInfo(scheduleInfo.allTensors, net)
+        loop schedule configs
+            Schedule -> Schedule: _scheduleUnit(net, config, allTensors)
+        end
+        Schedule -> Schedule: setInputOutputForOps()
+        end
+
+        Interpreter -> Session: new Session()
+        Session -> CLRuntime: onCreate()
+        CLRuntime -> OpenCLBackend: new OpenCLBackend()
+        Session -> Pipeline: new Pipeline() # 前面scheduel也创建了pipeline？
+    end
+end
+
+== 3. 执行推理 ==
+autonumber 3.1
+User -> Interpreter: getSessionInput()
+User -> Interpreter: runSession()
+Interpreter -> Session: run()
+loop iterate mPipelines
+    Session -> Pipeline: execute()
+    Pipeline -> OpenCLBackend: onExecuteBegin()
+    loop iterate mInfo.executeBuffer.command 执行具体算子
+        Pipeline -> OpenCLOpXxxExecution: onExecute(inputs, outputs)
+    end
+    Pipeline -> OpenCLBackend: onExecuteEnd()
+end
+User -> Interpreter: getSessionOutput()
+
+
+@enduml
