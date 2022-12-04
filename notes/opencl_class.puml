@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class OpenCLRuntime {
+
++ buildKernel()
++ getGpuMemType()
++ getGpuType()
++ getMaxImage2DSize()
+}
+
+class Runtime {
+}
+
+' 负责创建，删除对象，是CL相关对象的创建者，包括Backend对象
+class CLRuntime {
+- mInfo
+- mOpenCLRuntime
+- mImagePool
+- mBufferPool
+- mCLRuntimeError
+- mTunedInfo
+
++ onCreate(): Backend*
++ onGabageCollect()
++ onGetCache()
++ onSetCache()
++ isCLRuntimeError()
++ onGetRuntimeStatus()
++ onMeasure()
++ onMaskOpReady()
+}
+
+class Backend {
+}
+
+class OpenCLBackend {
+}
+
+Runtime <|-- CLRuntime
+
+Backend <|-- OpenCLBackend
+
+
+
+@enduml

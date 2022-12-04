@@ -30,7 +30,7 @@ User -> Interpreter: createSession()
 group createMultiPathSession(configs)
     group createRuntime(configs)
         loop schedule configs
-            Interpreter -> Schedule: getApprociateType(config)
+            Interpreter -> Schedule: getApprociate¬Type(config)
             Interpreter -> RuntimeFactory: create(backendInfo)
             RuntimeFactory -> CLRuntimeCreator: onCreate()
             CLRuntimeCreator -> CLRuntime: new CLRuntime()

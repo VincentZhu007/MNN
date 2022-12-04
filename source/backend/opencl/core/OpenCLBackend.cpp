@@ -380,6 +380,8 @@ Execution* OpenCLBackend::onCreate(const std::vector<Tensor*>& inputs, const std
         auto maxImageSize = mOpenCLRuntime->getMaxImage2DSize();
         bool valid        = true;
         for (auto t : inputs) {
+            // tensorShape[0] * tensorShape[1]作为image.height；tensorShape[2] * UP_DIV(tensorShape[3], 4)作为image.width。
+
             auto tensorShape = OpenCL::tensorShapeFormat(t);
             int imageHeight = tensorShape[0] * tensorShape[1];
             int imageWidth  = tensorShape[2] * UP_DIV(tensorShape[3], 4);

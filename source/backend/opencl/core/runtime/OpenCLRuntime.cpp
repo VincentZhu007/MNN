@@ -154,13 +154,17 @@ OpenCLRuntime::OpenCLRuntime(const BackendConfig::PrecisionMode precision, const
             //set gpu mode, tuning level and memory object
             setGpuMode(cl_mode);
             
-            if(mMemType == AUTO) {
-                if(mGpuType == MALI && precision != BackendConfig::Precision_Normal) {//buffer mode not support Normal Precision yet
-                    mMemType = BUFFER;
-                } else {
-                    mMemType = IMAGE;
-                }
-            }
+//            if(mMemType == AUTO) {
+//                if(mGpuType == MALI && precision != BackendConfig::Precision_Normal) {//buffer mode not support Normal Precision yet
+//                    mMemType = BUFFER;
+//                  MNN_PRINT("set cl mem type to buffer\n");
+//                } else {
+//                    mMemType = IMAGE;
+//                  MNN_PRINT("set cl mem type to image\n");
+//                }
+//            }
+//          mMemType = BUFFER;
+          mMemType = IMAGE;
 
             if(getDeviceSupportsExtension(*(mFirstGPUDevicePtr.get()), "cl_arm_integer_dot_product_int8")){
                 mSupportDotInt8 = true;
@@ -193,7 +197,7 @@ void OpenCLRuntime::setGpuMode(const int cl_mode_num) {
     if(totalSet > 1) {
         MNN_PRINT("set both BUFFER and IMAGE mode is not permitted, please check cl_mode:%x！\n", cl_mode_num);
     }
-    
+
     totalSet = 0;
     isSet = (cl_mode_num & MNN_GPU_TUNING_NONE);
     if(isSet) {
